@@ -1,3 +1,30 @@
+# Create NestJS Project
+### Project setup
+```bash
+# Install NestJS
+npm i -g @nestjs/cli
+
+# Create a new NetsJS application 'nestjs-graphql-mongodb'
+# option: npm
+nest new nestjs-graphql-mongodb
+cd nestjs-graphql-mongodb
+
+# Install dependencies
+npm i @nestjs/graphql graphql-tools graphql apollo-server-express mongoose --save
+```
+Keep only root files `main.ts` and `app.module.ts`
+
+![Alt text](readme/nest-new.png)
+
+
+## Reference
+### NestJS
+- NestJS First Steps: https://docs.nestjs.com/first-steps
+- NestJS Recipes: https://docs.nestjs.com/recipes/crud-generator
+- NestJS Mongo: https://docs.nestjs.com/techniques/mongodb
+- NestJS GraphQL: https://docs.nestjs.com/graphql/quick-start
+- Tutorial: https://javascript.plainenglish.io/build-a-scalable-graphql-server-with-nestjs-mongodb-typescript-1eeda049f7c8
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
