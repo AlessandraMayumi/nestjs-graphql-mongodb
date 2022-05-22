@@ -10,11 +10,57 @@ nest new nestjs-graphql-mongodb
 cd nestjs-graphql-mongodb
 
 # Install dependencies
-npm i @nestjs/graphql graphql-tools graphql apollo-server-express mongoose --save
+npm i @nestjs/graphql graphql-tools graphql apollo-server-express @nestjs/mongoose mongoose --save
 ```
 Keep only root files `main.ts` and `app.module.ts`
 
 ![Alt text](readme/nest-new.png)
+
+# Start a mongo server instance
+### Install Docker engine
+https://docs.docker.com/engine/install/ubuntu/
+### Docker componse
+The Compose file defines services, networks, and volumes for a Docker application. A `service` is an abstract concept implemented on platforms by running the same `container image`. Services store and share persistent data into `volumes`.
+
+The top-level `version` property is defined by specification for backward compability but is only informative.
+
+The top-level `name` property is defined by specification as project name to be used if user doesn't set one explicitly.
+
+### MongoDB 
+MongoDB is a NoSQL database that uses JSON-like documents. The MongoDB server in the image listens on the standard port, 27017.
+
+When the container is started for the first time, it will execute files with the extension `.sh` and `.js` that are found in `/docker 
+
+`docker-compose.yml`
+```yml
+version: '3.9'
+
+services: 
+  mongo: 
+    image: mongo:latest 
+    container_name: my-mongo 
+    restart: always 
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: rootuser 
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword 
+    ports: 
+      - 27017:27017 
+    volumes: 
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+```
+Create a `docker` folder in the root of the NestJS project.
+```bash
+# Docker Compose
+docker-compose up -d
+# List containers
+docker ps -a
+# Stop and Remove containers
+docker stop <container-name> && docker rm <container-name>
+# List images
+docker images
+# Remove images
+docker rmi <image-id>
+```
 
 
 ## Reference
@@ -24,6 +70,10 @@ Keep only root files `main.ts` and `app.module.ts`
 - NestJS Mongo: https://docs.nestjs.com/techniques/mongodb
 - NestJS GraphQL: https://docs.nestjs.com/graphql/quick-start
 - Tutorial: https://javascript.plainenglish.io/build-a-scalable-graphql-server-with-nestjs-mongodb-typescript-1eeda049f7c8
+### Docker 
+- DockerHub Mongo: https://hub.docker.com/_/mongo
+- MongoDB server with Docker Compose: https://dev.to/sonyarianto/how-to-spin-mongodb-server-with-docker-and-docker-compose-2lef
+- MongoDB and Docker: https://www.digitalocean.com/community/tutorials/how-to-set-up-flask-with-mongodb-and-docker
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
