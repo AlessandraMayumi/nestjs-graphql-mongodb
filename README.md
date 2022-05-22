@@ -1,5 +1,6 @@
 # Create NestJS Project
 ### Project setup
+<!-- TODO: introduction to NestJS -->
 ```bash
 # Install NestJS
 npm i -g @nestjs/cli
@@ -10,7 +11,7 @@ nest new nestjs-graphql-mongodb
 cd nestjs-graphql-mongodb
 
 # Install dependencies
-npm i @nestjs/graphql graphql-tools graphql apollo-server-express @nestjs/mongoose mongoose --save
+npm i @nestjs/graphql graphql-tools graphql apollo-server-express @nestjs/mongoose mongoose class-validator --save
 ```
 Keep only root files `main.ts` and `app.module.ts`
 
@@ -29,7 +30,11 @@ The top-level `name` property is defined by specification as project name to be 
 ### MongoDB 
 MongoDB is a NoSQL database that uses JSON-like documents. The MongoDB server in the image listens on the standard port, 27017.
 
-When the container is started for the first time, it will execute files with the extension `.sh` and `.js` that are found in `/docker 
+When the container is started for the first time, it will execute files with the extension `.sh` and `.js` that are found in `/docker`.
+
+Create a `docker` folder in the root of the NestJS project.
+
+![Alt text](readme/docker-folder.png)
 
 `docker-compose.yml`
 ```yml
@@ -48,7 +53,23 @@ services:
     volumes: 
       - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 ```
-Create a `docker` folder in the root of the NestJS project.
+`mongo-init.js`
+```javascript
+db = db.getSiblingDB('test');
+db.createUser(
+    {
+        user: "user",
+        pwd: "password",
+        roles: [
+            {
+                role: "readWrite",
+                db: "test"
+            }
+        ]
+    }
+);
+db.createCollection('users');
+```
 ```bash
 # Docker Compose
 docker-compose up -d
@@ -61,7 +82,28 @@ docker images
 # Remove images
 docker rmi <image-id>
 ```
+# Mongoose setup
+Mongoose can be used to integrate Nest with MongoDB database. Mongoose is a object modeling tool.
 
+```bash
+# Create module 'database'
+nest g mo database
+
+# Create resource 'user'
+# option: GraphQL (code first), generate CRUD entry points
+# avoid creating test files
+nest g resource user --no-spec
+```
+`database.module.ts`
+```javascript
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [MongooseModule.forRoot('mongodb://user:password@localhost/test')],
+})
+export class DatabaseModule {}
+```
 
 ## Reference
 ### NestJS
