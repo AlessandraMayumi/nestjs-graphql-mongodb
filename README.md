@@ -11,7 +11,7 @@ nest new nestjs-graphql-mongodb
 cd nestjs-graphql-mongodb
 
 # Install dependencies
-npm i @nestjs/graphql graphql-tools graphql apollo-server-express @nestjs/mongoose mongoose class-validator --save
+npm i @nestjs/graphql graphql-tools graphql @nestjs/apollo apollo-server-express @nestjs/mongoose mongoose class-validator --save
 ```
 Keep only root files `main.ts` and `app.module.ts`
 
@@ -89,10 +89,6 @@ Mongoose is a object modeling tool that can be used to integrate Nest with Mongo
 ```bash
 # Create module 'database'
 nest g mo database
-# Create resource 'user'
-# option: GraphQL (code first), generate CRUD entry points
-# avoid creating test files
-nest g resource user --no-spec
 ```
 Import the MongooseModule into the DatabaseModule.The forRoot() method accepts the same configuration object as mongoose.connect() from the Mongoose package.
 
@@ -130,7 +126,43 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 ```
+# GraphQL setup
+GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data which gives clients the power to ask for exactly what they need and nothing more.
 
+Nest offers two ways of building GraphQL applications, the code first and the schema first methods. 
+
+In the `code first` approach, decorators and TypeScript classes generates the corresponding GraphQL schema. This approach works exclusively with TypeScript and avoid context switching between language syntaxes.
+
+In the `schema first` approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates TypeScript definitions (using either classes or interfaces) based on the GraphQL schemas to reduce the need to write redundant boilerplate code.
+
+```bash
+# Create resource 'user'
+# option: GraphQL (code first), generate CRUD entry points
+# avoid creating test files
+nest g resource user --no-spec
+```
+Import the GraphQLModule and configure it with the forRoot() static method.
+
+`app.module.ts`
+```javascript
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { DatabaseModule } from './database/database.module';
+import { UserModule } from './user/user.module';
+
+@Module({
+  imports: [
+    DatabaseModule,
+    UserModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: 'schema.gql',
+    }),
+  ],
+})
+export class AppModule {}
+```
 ## Reference
 ### NestJS
 - NestJS First Steps: https://docs.nestjs.com/first-steps
