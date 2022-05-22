@@ -1,4 +1,4 @@
-# Create NestJS Project
+# Create a NestJS Project
 ### Project setup
 <!-- TODO: introduction to NestJS -->
 ```bash
@@ -70,6 +70,7 @@ db.createUser(
 );
 db.createCollection('users');
 ```
+Useful docker commands
 ```bash
 # Docker Compose
 docker-compose up -d
@@ -83,17 +84,18 @@ docker images
 docker rmi <image-id>
 ```
 # Mongoose setup
-Mongoose can be used to integrate Nest with MongoDB database. Mongoose is a object modeling tool.
+Mongoose is a object modeling tool that can be used to integrate Nest with MongoDB database.
 
 ```bash
 # Create module 'database'
 nest g mo database
-
 # Create resource 'user'
 # option: GraphQL (code first), generate CRUD entry points
 # avoid creating test files
 nest g resource user --no-spec
 ```
+Import the MongooseModule into the DatabaseModule.The forRoot() method accepts the same configuration object as mongoose.connect() from the Mongoose package.
+
 `database.module.ts`
 ```javascript
 import { Module } from '@nestjs/common';
@@ -103,6 +105,30 @@ import { MongooseModule } from '@nestjs/mongoose';
   imports: [MongooseModule.forRoot('mongodb://user:password@localhost/test')],
 })
 export class DatabaseModule {}
+```
+### Model injection
+With Mongoose, everything is derived from a Schema. Each schema maps to a MongoDB collection and defines the shape of the documents within that collection. Schemas are used to define Models. Models are responsible for creating and reading documents from the underlying MongoDB database.
+
+`user.schema.ts`
+```javascript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type UserDocument = User & Document;
+
+@Schema()
+export class User {
+  @Prop()
+  name: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  age: number;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
 ```
 
 ## Reference
